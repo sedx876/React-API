@@ -3,17 +3,38 @@ import NewSingle from './NewSingle'
 
 class News extends Component {
 
-  renderItems(){
-    return this.props.items.map((item) => (
-      <NewSingle key={item.id} item={item}/>
-    ))
+  constructor(props) {
+    super(props);
+    this.state = {
+      news: [],
+    };
+  }
+
+  componentDidMount(){
+    const url = `https://newsapi.org/v2/${this.props.news.type}?${this.props.news.query}&apiKey=72a5969e78b742249ffec2cce9a7647a`
+    fetch(url)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({
+          news: data.articles
+        })
+      })
+      .catch((error) => console.log(error));
+  }
+
+  renderItems() {
+    return this.state.news.map((item) => (
+      <NewSingle key={item.url} item={item}/>
+    ));
   }
 
   render() {
     return (
-      <ul>
-        {this.renderItems()}
-      </ul>
+      <div className="row">
+      {this.renderItems()}
+    </div>
     )
   }
 }
